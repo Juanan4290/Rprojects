@@ -1,25 +1,60 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+Reproducible Data: Course Project 1
+===================================
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 
-
-## Loading and preprocessing the data
+For this course project `data.table` and `dplry` packages are needed. So it is neccesary to install them before run the code.
 
 
 
-## What is mean total number of steps taken per day?
+### Loading and preprocessing the data
+
+```r
+activity=fread("activity.csv")
+activity$date=as.Date(activity$date)
+head(activity)
+```
+
+```
+##    steps       date interval
+## 1:    NA 2012-10-01        0
+## 2:    NA 2012-10-01        5
+## 3:    NA 2012-10-01       10
+## 4:    NA 2012-10-01       15
+## 5:    NA 2012-10-01       20
+## 6:    NA 2012-10-01       25
+```
+
+### What is mean total number of steps taken per day?
+For this part of the assignment, missing values in the dataset are ignored.
 
 
+```r
+stepsDay=group_by(activity,date)
+stepsDay=summarize(stepsDay,totalSteps=sum(steps))
 
-## What is the average daily activity pattern?
+###Histogram of the total number of steps taken each day
+hist(stepsDay$totalSteps,
+     xlab="Steps",main="Total number of steps taken each day")
+```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
 
+```r
+###Mean and median number of steps taken each day
+mean(stepsDay$totalSteps,na.rm=T) #Mean
+```
 
-## Imputing missing values
+```
+## [1] 10766.19
+```
 
+```r
+median(stepsDay$totalSteps,na.rm=T) #Median
+```
 
+```
+## [1] 10765
+```
 
-## Are there differences in activity patterns between weekdays and weekends?
+###What is the average daily activity pattern?
+
