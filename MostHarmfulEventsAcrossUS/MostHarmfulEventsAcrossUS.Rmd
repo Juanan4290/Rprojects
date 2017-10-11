@@ -9,7 +9,7 @@ From the [National Weather Service Storm Data Documentation](http://www.noaa.gov
 
 We first read data from the raw text file included in the zip archive. For reading the data we are going to use the function `fread`of the `data.table` package. `dplry` and `ggplot2` packages are going to be required for the data analysis.
 
-```{r packages,include=FALSE}
+```r
 ##Packages installation
 if (!require(data.table)){install.packages("data.table")}
 if (!require(plyr)){install.packages("plyr")}
@@ -22,25 +22,25 @@ library(dplyr)
 library(data.table)
 ```
 
-```{r reading data}
+```r
 StormData=fread("repdata%2Fdata%2FStormData.csv")
 StormData=as.data.frame(StormData)
 ```
 
 After reading data, we check the first few rows ih the dataset. There are 902,297 rows.
 
-```{r str}
+```r
 str(StormData)
 head(StormData[,1:8])
 ```
 
 
-###Results
+### Results
 
-####Population health analysis
+#### Population health analysis
 The columns we are interested in are the `FATALITIES` and `INJURIES` variables, which contain the number of dead and injured people. First, we are going to subset the dataset with the variables we are interested in.
 
-```{r subsetting health}
+```r
 #Subsetting most harmful events for population health
 StormHealth=select(StormData,c(EVTYPE,FATALITIES,INJURIES))
 StormHealth$EVTYPE=as.factor(StormHealth$EVTYPE)
@@ -56,7 +56,7 @@ MostHarmful=as.character(StormHealth5$EVTYPE[1]) #Most harmful event
 ```
 
 In order to show the 5 most harmful events respect to population health, we can make a barplot in terms of number of people dead or injured by type of event.
-```{r barplot1,fig.width=8,fig.height=6}
+```r
 #Data for plotting
 data=as.data.frame(t(StormHealth5[,2:4]))
 names(data)=StormHealth5$EVTYPE
@@ -70,11 +70,11 @@ legend("topright", c("Fatalities","Injuries","Total"),fill=c("yellow","blue","re
 According to barplot, we can easyly see that the **most harmful type of event across the United States is `r MostHarmful`**
 
 
-####Economic consequences
+#### Economic consequences
 In this case, the columns we are interested in are the `PROPDMG` and `CROPDMG` variables, which contain the economic property and crop consequences. `PROPDMGEXP` and `CROPDMGEXP`columns have the exponent of the `PROPDMG` and `CROPDMG` variables. 
 
 First, we are going to subset the dataset with the variables we are interested in.
-```{r subsetting ec}
+```r
 #Subsetting 5 types of events that have the greatest economic consequences
 StormEc=select(StormData,c(EVTYPE,PROPDMG,PROPDMGEXP,CROPDMG,CROPDMGEXP))        
   #Some variables have to be factor in order to do some changes
@@ -84,7 +84,7 @@ StormEc=select(StormData,c(EVTYPE,PROPDMG,PROPDMGEXP,CROPDMG,CROPDMGEXP))
 ```
 
 We have to replace the key letter in the exponent column with the correct number.
-```{r}
+```r
 #Replacing exponent code for exponent number
 StormEc$PROPDMGEXP=mapvalues(StormEc$PROPDMGEXP,
                    c("K","M","","B","m","+","0","5","6","?","4","2","3","h","7","H","-","1","8"), 
@@ -107,7 +107,7 @@ StormEc=select(StormEc,c(EVTYPE,PROPDMG,CROPDMG))
 ```
 
 In order to show the 5 type of events that have the greatest economic consequences, we can make a barplot in terms of property and crop economic consequences by type of event.
-```{r barplot2,fig.width=8,fig.height=6}
+```r
 #Grouping for types of events
 StormEc5=group_by(StormEc,EVTYPE)
 StormEc5=summarize(StormEc5,property=sum(PROPDMG),crop=sum(CROPDMG),
