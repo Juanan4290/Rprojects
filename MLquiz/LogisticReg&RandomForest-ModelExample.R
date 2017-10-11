@@ -1,4 +1,4 @@
-#####################################Question 4
+## Logistic Regression Model Example
 library(ElemStatLearn); data(SAheart); library(caret)
 
 set.seed(8484)
@@ -16,12 +16,12 @@ model=train(chd ~ age + alcohol + obesity + tobacco + typea + ldl ,data=trainSA,
 testPredictions=predict(model,testSA)
 trainPredictions=predict(model,trainSA)
 
-###Missclasification rate in R
+### Missclasification rate in R
 mean(as.numeric(trainPredictions) != as.numeric(trainSA$chd))
 mean(as.numeric(testPredictions) != as.numeric(testSA$chd))
 
 
-#############################Question 5
+## Random Forest model example
 library(ElemStatLearn); library(caret); data(vowel.train); data(vowel.test)
 vowel.train$y=as.factor(vowel.train$y)
 vowel.test$y=as.factor(vowel.test$y)
