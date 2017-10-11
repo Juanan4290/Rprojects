@@ -1,13 +1,14 @@
 Most harmful events across the United States
 ============================================
-####Synopsis
+#### Synopsis
 In this report we aim to explore the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States from 1950 to November 2011, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
 Our specific goal is to know what types of wheather events are most harmful with respect to population health and which ones have the greatest economic consequences.
 
-###Data Processing
+### Data Processing
 From the [National Weather Service Storm Data Documentation](http://www.noaa.gov/) we obtained data on storms occured across the United States. The events in the database start in the year 1950 and end in November 2011. In the earlier years of the database there are generally fewer events recorded, most likely due to a lack of good records. More recent years should be considered more complete.
 
 We first read data from the raw text file included in the zip archive. For reading the data we are going to use the function `fread`of the `data.table` package. `dplry` and `ggplot2` packages are going to be required for the data analysis.
+
 ```{r packages,include=FALSE}
 ##Packages installation
 if (!require(data.table)){install.packages("data.table")}
