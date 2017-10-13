@@ -3,4 +3,4 @@ Using devices such as *Jawbone Up*, *Nike FuelBand*, and *Fitbit* it is now poss
 These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. 
 One thing that people regularly do is quantify *how much* of a particular activity they do, but they rarely quantify *how well* they do it. 
 
-In this project we use Decission Trees and Random Forest in the train set to predict *how well* people perform barbell lifts.
+In this project we use Decission Trees and Random Forest in the train set to predict *how well* people perform barbell lifts with an accuracy of 99.64% in the test set.
