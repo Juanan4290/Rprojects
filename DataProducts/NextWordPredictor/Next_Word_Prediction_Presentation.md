@@ -14,7 +14,7 @@ the app would suggest the three most likely words that would replace "...", i.e.
 
 Extra space
 
--   The source codes of the app, the N-gram datasets and the algorithm available on GitHub repo at: <https://github.com/Juanan4290/NextWordPredictor>
+-   The source codes of the app, the N-gram datasets and the algorithm available on GitHub repo at: <https://github.com/Juanan4290/Rprojects/tree/master/DataProducts/NextWordPredictor/R>
 
 Extra space
 
@@ -62,6 +62,6 @@ Viewing the Shiny App
 
 This is how the Next Word Predictor Application looks like:
 
-![](figure/image-1.png)
+![](figure/image.png)
 
 In the left side you can insert a word or sentence and once you click on **Predict** button or press Enter the app will display some words suggested and other information like which N-gram next word was predict with, time invested to procces the algorithm or cleaned text for prediction.
