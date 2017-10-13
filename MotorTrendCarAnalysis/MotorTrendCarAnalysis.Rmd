@@ -1,0 +1,101 @@
+---
+title: "Motor Trend Car Analysis"
+author: "Juan Antonio Morales, juanan4290@gmail.com"
+date: "February 15, 2017"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "figure/"
+)
+```
+
+Motor Trend Car Analysis
+========================
+
+###Summary
+In this project we are going to work for *Motor Trend*, a magazine about the automobile industry. They are interested in exploring the relationship between a set of variables and miles per gallon. They are particularly interested in the following two questions:
+
+1. Is an automatic or manual transmission better for MPG?
+2. Quantify the MPG difference between automatic and manual transmissions
+
+###Exploratory Data Analysis
+The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models).
+
+```{r data}
+library(datasets) 
+data(mtcars)
+```
+
+
+Some exploratory data analysis:
+```{r exploratory data analysis}
+str(mtcars)
+```
+
+For the analysis we have to transform the class of some variables variable into a factor:
+```{r am class}
+mtcars$cyl <- factor(mtcars$cyl)
+mtcars$vs <- factor(mtcars$vs)
+mtcars$gear <- factor(mtcars$gear)
+mtcars$carb <- factor(mtcars$carb)
+mtcars$am <- factor(mtcars$am,labels=c('Automatic','Manual'))
+```
+
+###1.Is an automatic or manual transmission better for MPG?
+In Appendix 1 we can see a boxplot of MPG by transmission types (Appendix 2). According to Appendix 2 boxplot, it seems that manual transmission is better in miles/(US) gallon than automatic transmission. We can do a t-test to reject the null hypothesis (there is no difference in MPG between manual and automatic transmission).
+
+```{r t-test}
+t.test(mpg ~ am,data=mtcars)
+```
+
+Based on t-test, **p-value = 0.001374** < 0.05, so we can reject the null hypothesis and hence __manual transmission is better than automatic transmission for MPG.__
+
+
+###2.Quantify the MPG difference between automatic and manual transmissions
+To quantify the MPG difference between automatic and manual transmissions we are going to fit a lineal model between **mpg** and **am** variables.
+
+```{r fit}
+fit1=lm(mpg ~ am,data=mtcars)
+summary(fit1)
+```
+
+From this model, we can say that __automatic run at 17.15 mpg, while manual have 7.24 more mpg__ and about 35.98% of the variance is explained by this model.
+
+Multivariable linear regression model:
+```{r fit2}
+fit2=lm(mpg ~ am + wt, data=mtcars)
+fit3=lm(mpg ~ am + wt + cyl, data=mtcars)
+fit4=lm(mpg ~ am + wt + cyl + hp, data=mtcars)
+anova(fit1,fit2,fit3,fit4)
+```
+
+The final model:
+```{r final model}
+summary(fit4)
+```
+
+This model explains 86.59% of the variance. It may be concluded that on average, manual transmissions have 1.81 more mpg than automatic.
+
+
+###Appendix
+
+####Appendix 1:
+```{r boxplot}
+library(ggplot2)
+g=ggplot(mtcars, aes(x=am,y=mpg,fill=am)) +
+        geom_boxplot(varwidth=T,width=0.5)+
+        geom_jitter(shape=16,position=position_jitter(0.1),alpha=0.5)+
+        labs(x="Transmission",y="Miles per galon")+
+        scale_x_discrete(labels=c("Manual","Automatic"))
+g  
+```
+
+####Appendix 2:
+Residual plots:
+```{r residual, fig.height=3.5,fig.width=3.5}
+plot(fit4)
+```
