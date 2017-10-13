@@ -12,11 +12,7 @@ For example, if a user types:
 
 the app would suggest the three most likely words that would replace "...", i.e. *gym, store or mall.*
 
-Extra space
-
 -   The source codes of the app, the N-gram datasets and the algorithm available on GitHub repo at: <https://github.com/Juanan4290/Rprojects/tree/master/DataProducts/NextWordPredictor/R>
-
-Extra space
 
 -   The shiny application developed for this course is available at: <https://juanan4290.shinyapps.io/nextwordpredictor/>
 
