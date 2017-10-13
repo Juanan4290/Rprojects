@@ -1,0 +1,179 @@
+---
+title: "Statistical Inference Course Project"
+author: "Juan Antonio Morales"
+date: "31 de enero de 2017"
+output: pdf_document
+---
+
+##Part 1: A simulation exercise
+
+###Overview:
+In this project we are going to investigate the exponential distribution in R and compare it with the Central Limit Theorem. In the exponential distribution `lambda` is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. 
+
+
+###Simulations:
+The exponential distribution is simulated in R with `rexp(n,lambda)`, where lambda=0.2, sample size n is 40, and the number of simulation is 10000 times. The 10000 sample means are stored in `SampleMean`.
+
+```{r inputs}
+#Inputs
+n=40                            #Sample Size
+B=10000                          #Number of simulations
+
+lambda=0.2                      #Lambda for exponential distributions
+ExpMean=1/0.2                   #Theoretical mean and sd of the exponential distribution
+ExpVariance=(1/lambda)^2/n      #Theoretical variance of the exponential distribution
+```
+
+In order to be able to reproduce the data in the future, `set.seed` is needed for this part of the project:
+
+```{r set.seed}
+set.seed=0
+```
+
+```{r simluations}
+SampleMean=NULL
+
+#Simulations
+for (i in 1:B) {
+        sample=rexp(n,lambda)
+        SampleMean=c(SampleMean,mean(sample))
+} 
+
+```
+
+These are the first 6 of the `SampleMean` vector:
+
+```{r SampleMean}
+head(SampleMean)
+```
+
+###Sample Mean versus Theoretical Mean:
+We can show the sample mean and theoretical mean:
+```{r SampleMean2}
+SimMean=round(mean(SampleMean),4)
+ExpMean
+```
+
+In this plot, we can see the mean distribution by simulations and the theoretical mean of the exponential distribution:
+
+```{r plot1}
+library(ggplot2)
+SampleMean <- as.data.frame(SampleMean)
+g <- ggplot(SampleMean, aes(x=SampleMean))
+g <- g + geom_histogram(binwidth = .2, color="black", fill="blue") +
+    geom_vline(xintercept = ExpMean, color="red", size=1, linetype=3) +
+    labs(x="Mean of 40 simulated exponential sample", y= "Frequecy", 
+         title="Simulated Exponential Samples Means")
+g
+```
+
+
+###Sample Variance versus Theoretical Variance:
+In the same way we have done with the mean, we can do with the variance:
+```{r SampleVar}
+SampleVar=as.numeric(round(var(SampleMean),4))
+SampleVar
+ExpVariance
+```
+
+Variance distribution by simulations and theoretical variance of exponencial distribution:
+
+```{r table}
+table=matrix(c(ExpMean, SimMean, ExpVariance,SampleVar),
+                ncol = 2, byrow=TRUE)
+colnames(table)=c("Theroetical","Sample Mean")
+rownames(table)=c("Mean","Variance")
+table=as.table(table)
+table
+```
+
+Acording to above table, both theoretical mean and sample mean are very close due in part to the large number of simulations performed. The same happens with te theoretical variance and sample variance although in this case there is more dispersion than in the case of the mean.
+
+###Distribution:
+We are going to make an histogram with the sample means simulated and we will add the density curve of the normal distribution in order to compare both density graphs:
+
+```{r plot 2}
+g <- ggplot(SampleMean, aes(x=SampleMean))
+g <- g + geom_histogram(binwidth = .2, color="black", fill="blue" , aes(y=..density..))+
+         stat_function(fun=dnorm, args=list(mean=ExpMean, sd=sqrt(ExpVariance)), 
+                       color="red", size =1) +
+         scale_x_continuous(breaks=seq(0,8,by=1))+
+         labs(x="Mean of 40 simulated exponential sample", y= "Prob.", 
+         title="Density of Simulated Exponential Samples Means")
+g
+```
+
+The plot shows that the distribution is approximately normal (red curve).
+
+
+##Part 2: Basic inferential data analysis
+
+###Overview:
+In the second part of the project, we are going to analyze the ToothGrowth data in the R datasets package
+
+###Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r load ToothGrowth}
+data("ToothGrowth")
+head(ToothGrowth)
+```
+There are 3 variables and 60 observations in the ToothGrowth datasets. The three variables of the dataset are `length`, `supplement` and `dose`.
+
+```{r ToothGrowth str}
+str(ToothGrowth)
+unique(ToothGrowth$dose)
+```
+
+There are 3 levels for `supp`: `OJ` (orange juice) and `VC` (Vitamin C). For dose variable there are 3 values: 0.5, 1 and 2 mg.
+
+###Summary of the data
+```{r summary}
+summary(ToothGrowth)
+```
+
+We can examine the data looking at the tooth length compared to dose by supplement.
+```{r plot3}
+graph = ggplot(ToothGrowth,aes(x=dose,y=len,dose=factor(supp)))+
+        geom_point(aes(color=supp))+
+        labs(y="Tooth Length",x="Dosage",title="Tooth length by dosage and supplement")+
+        theme(plot.title = element_text(hjust = 0.5))
+graph
+``` 
+
+###confidence intervals to compare tooth growth by supp and dose
+We are going to use `t.test` function to determine if there is a difference in the performance of the treatments. 
+First, we will run the test based on supplement in order to see if the **p-value > 0.05** and if the confidence interval crosses 0.
+
+```{r test1}
+t.test(ToothGrowth$len[ToothGrowth$supp=="OJ"],ToothGrowth$len[ToothGrowth$supp=="VC"],
+       paired=F,var.equal=F)
+```
+
+The `p-value` is **0.060** and the confidence interval is **[-0.171 7.571]**, thus containing 0.
+
+Since the p-value is 0.060, there is not enough evidence to reject the null hypothesis.
+We cannot assume the delivery type has a significant effect on tooth growth.
+
+
+Next, we are going to test the tooth length comparing the dosage of **0.5** mg to **1** mg to determine the effects of an increased dosage:
+```{r test2}
+t.test(ToothGrowth$len[ToothGrowth$dose==0.5],ToothGrowth$len[ToothGrowth$dose==1],
+       paired=F,var.equal=F)
+```
+
+We see the **p-value is very small**. Therefore, we can reject the null hypothesis and assume **the dosage increase from 0.5 mg to 1 mg creates an positive effect on tooth growth.**
+
+
+Performing the test comparing the dosage of **1** mg and **2** mg:
+```{r test3}
+t.test(ToothGrowth$len[ToothGrowth$dose==1],ToothGrowth$len[ToothGrowth$dose==2],
+       paired=F,var.equal=F)
+```
+
+Again, we can see that the **p-value is very small** as it happens in the previous test.Thus, we can again reject the null hypothesis and assume **the dosage increase from 1 mg to 2 mg creates an positive effect on tooth growth.**
+
+###Conclusions and the assumptions needed for your conclusions.
+In this experiment, we assume that there were 60 guinea pigs in total and that they were independent and not paired.
+
+The delivery type does not show a significant increase in tooth growth even though it does have a confidence level that crosses 0 at the 95% confidence.
+
+However, there does appear to be a difference with an increase in tooth growth when the dosage is increased. The tests comparing the dosage show confidence intervals of differences never crossing zero.

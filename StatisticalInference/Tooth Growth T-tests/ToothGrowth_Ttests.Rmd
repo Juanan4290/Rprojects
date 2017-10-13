@@ -1,0 +1,88 @@
+---
+title: "Tooth Growth T-tests"
+author: "Juan Antonio Morales, juanan4290@gmail.com"
+date: "31 de enero de 2017"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "Tooth Growth T-tests/figure/"
+)
+```
+
+Tooth Growth T-tests
+====================
+
+###Overview:
+In the second part of the project, we are going to analyze the ToothGrowth data in the R datasets package
+
+###Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r load ToothGrowth}
+data("ToothGrowth")
+head(ToothGrowth)
+```
+There are 3 variables and 60 observations in the ToothGrowth datasets. The three variables of the dataset are `length`, `supplement` and `dose`.
+
+```{r ToothGrowth str}
+str(ToothGrowth)
+unique(ToothGrowth$dose)
+```
+
+There are 3 levels for `supp`: `OJ` (orange juice) and `VC` (Vitamin C). For dose variable there are 3 values: 0.5, 1 and 2 mg.
+
+###Summary of the data
+```{r summary}
+summary(ToothGrowth)
+```
+
+We can examine the data looking at the tooth length compared to dose by supplement.
+```{r plot3}
+library(ggplot2)
+graph = ggplot(ToothGrowth,aes(x=dose,y=len,dose=factor(supp)))+
+        geom_point(aes(color=supp))+
+        labs(y="Tooth Length",x="Dosage",title="Tooth length by dosage and supplement")+
+        theme(plot.title = element_text(hjust = 0.5))
+graph
+``` 
+
+###confidence intervals to compare tooth growth by supp and dose
+We are going to use `t.test` function to determine if there is a difference in the performance of the treatments. 
+First, we will run the test based on supplement in order to see if the **p-value > 0.05** and if the confidence interval crosses 0.
+
+```{r test1}
+t.test(ToothGrowth$len[ToothGrowth$supp=="OJ"],ToothGrowth$len[ToothGrowth$supp=="VC"],
+       paired=F,var.equal=F)
+```
+
+The `p-value` is **0.060** and the confidence interval is **[-0.171 7.571]**, thus containing 0.
+
+Since the p-value is 0.060, there is not enough evidence to reject the null hypothesis.
+We cannot assume the delivery type has a significant effect on tooth growth.
+
+
+Next, we are going to test the tooth length comparing the dosage of **0.5** mg to **1** mg to determine the effects of an increased dosage:
+```{r test2}
+t.test(ToothGrowth$len[ToothGrowth$dose==0.5],ToothGrowth$len[ToothGrowth$dose==1],
+       paired=F,var.equal=F)
+```
+
+We see the **p-value is very small**. Therefore, we can reject the null hypothesis and assume **the dosage increase from 0.5 mg to 1 mg creates an positive effect on tooth growth.**
+
+
+Performing the test comparing the dosage of **1** mg and **2** mg:
+```{r test3}
+t.test(ToothGrowth$len[ToothGrowth$dose==1],ToothGrowth$len[ToothGrowth$dose==2],
+       paired=F,var.equal=F)
+```
+
+Again, we can see that the **p-value is very small** as it happens in the previous test.Thus, we can again reject the null hypothesis and assume **the dosage increase from 1 mg to 2 mg creates an positive effect on tooth growth.**
+
+###Conclusions and the assumptions needed for your conclusions.
+In this experiment, we assume that there were 60 guinea pigs in total and that they were independent and not paired.
+
+The delivery type does not show a significant increase in tooth growth even though it does have a confidence level that crosses 0 at the 95% confidence.
+
+However, there does appear to be a difference with an increase in tooth growth when the dosage is increased. The tests comparing the dosage show confidence intervals of differences never crossing zero.
