@@ -1,0 +1,101 @@
+---
+title: "Weight Lifting Exercise"
+author: "Juan Antonio Morales, juanan4290@gmail.com"
+date: "March 3, 2017"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "figure/"
+)
+```
+
+Weight Lifting Exercise
+=======================
+
+###Summary
+Using devices such as *Jawbone Up*, *Nike FuelBand*, and *Fitbit* it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify *how much* of a particular activity they do, but they rarely quantify *how well* they do it. 
+
+
+###Exploratory Data Analysis
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.
+
+```{r download data}
+#Downloading files
+URLtrain="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+URLtest="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+download.file(URLtrain,destfile = "./train.csv")
+download.file(URLtest,destfile="./test.csv")
+```
+
+Loading files:
+```{r loading}
+training=read.csv(file="./train.csv",na.strings=c("NA","#DIV/0!",""))
+testing=read.csv(file="./test.csv",na.strings=c("NA","#DIV/0!",""))
+```
+
+We have two diferent data sets: *train* and *test* set. The data have been extracted from this source: http://groupware.les.inf.puc-rio.br/har and it provides us data from accelerometers on the belt, forearm, arm, and dumbbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. This is the **classe** variable in the training set that we want to predict.
+
+Some exploratory data analysis from cleaning training data set:
+```{r exploratory}
+NAs=apply(training,2,function(x)sum(is.na(x))/length(x))#NAs percent by column
+
+#Cleaning training and testing data set with, at least, 50% NAs
+training=training[,NAs<0.5]
+testing=testing[,NAs<0.5]
+
+str(training)
+table(training$classe)
+```
+
+####Data splitting
+We are going to create a partition in the training dataset. 70% of the partition will be for calibrating the model and the rest of the data will be for testing.
+```{r partition}
+library(caret)
+inTrain=createDataPartition(y=training$classe,p=0.7,list=F)
+myTraining=training[inTrain,]
+myTesting=training[-inTrain,]
+
+dim(myTraining); dim(myTesting)
+```
+
+####Preaparing myTraining
+Removing variables that are not predictors (columns from 1 to 7)
+```{r preparing myTraining}
+myTraining=myTraining[,8:dim(myTraining)[2]]
+nzv=nearZeroVar(myTraining, saveMetrics = TRUE)
+nzv
+```
+
+###Algorithm
+####Decision Trees
+```{r tree,fig.width=10,fig.height=8}
+library(rattle); library(rpart)
+set.seed(1124)
+
+treeModel=rpart(classe ~ .,data=myTraining,method="class")
+fancyRpartPlot(treeModel,sub="")
+
+predictions1=predict(treeModel,newdata=myTesting,type="class")
+confusionMatrix(predictions1,myTesting$classe)
+```
+
+####Random Forests
+```{r rf}
+library(randomForest)
+rfModel=randomForest(classe ~ .,data=myTraining)
+
+predictions2=predict(rfModel,newdata=myTesting)
+confusionMatrix(predictions2,myTesting$classe)
+```
+
+###Predicting values in the test set
+Random Forests algorithm is more accurate than Decision Trees algorithm. Random Forests gives us an accuracy of 99.64% in the testing set. 
+So we are going to use this model for predicting values in the test set.
+```{r predictions}
+predictions3=predict(rfModel,testing)
+predictions3
+```
