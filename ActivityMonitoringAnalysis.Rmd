@@ -1,0 +1,161 @@
+---
+title: "Activity Monitoring Analysis"
+author: "Juan Antonio Morales, juanan4290@gmail.com"
+date: December 22, 2016
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "figure/"
+)
+```
+
+
+Activity Monitoring Analysis
+===================================
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+For this course project `data.table` and `dplry` packages are needed. So it is neccesary to install them before run the code.
+```{r packages,include=FALSE}
+##Packages installation
+        ###data.table
+if (!require(data.table)){
+        install.packages("data.table")
+        library(data.table)
+}
+
+        ###dplyr
+if (!require(dplyr)){
+        install.packages("dplry")
+        library(dplry)
+}
+```
+
+
+### Loading and preprocessing the data
+```{r loading}
+activity=fread("activity.csv")
+activity$date=as.Date(activity$date)
+head(activity)
+```
+
+
+### What is mean total number of steps taken per day?
+For this part of the assignment, missing values in the dataset are ignored.
+
+Calculating the total number of steps taken per day
+```{r stepsDay}
+stepsDay=group_by(activity,date)
+stepsDay=summarize(stepsDay,totalSteps=sum(steps))
+```
+
+Histogram of the total number of steps taken each day
+```{r histogram_1}
+hist(stepsDay$totalSteps,
+     xlab="Steps",main="Total number of steps taken each day")
+```
+
+Mean and median number of steps taken each day
+```{r calculations_1}
+mean(stepsDay$totalSteps,na.rm=T) #Mean
+median(stepsDay$totalSteps,na.rm=T) #Median
+```
+
+
+###What is the average daily activity pattern?
+
+Time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+```{r intervalDay}
+intervalDay=group_by(activity,interval)
+intervalDay=summarize(intervalDay,stepsInterval=mean(steps,na.rm=T))
+
+#Plotting...
+plot(intervalDay$interval,intervalDay$stepsInterval,type="l",
+     main="Time series plot of the 5 minute interval",
+     xlab="Interval",ylab="Number of steps")
+```
+
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r maxSteps}
+intervalDay$interval[intervalDay$stepsInterval==max(intervalDay$stepsInterval)]
+```
+
+
+###Imputing missing values
+
+Calculating the total number of missing values in the dataset
+```{r NAs}
+nrow(activity)-sum(complete.cases(activity))
+```
+
+Devise a strategy for filling in all of the missing values in the dataset. The mean for 5-minute internal is considered for missing values
+```{r activityCompleteStrategy}
+activityComplete=activity #New dataset
+        for (i in 1:nrow(activity)){
+                if (is.na(activity$steps[i]==TRUE)){
+                        interval=as.numeric(activityComplete$interval[i])
+                        intervalMean=as.numeric(intervalDay[intervalDay$interval==interval,2])
+                        activityComplete$steps[i]=intervalMean
+                }
+        }
+```
+
+New dataset is equal to the original dataset but with the missing data filled in
+```{r activityComplete}
+head(activityComplete)
+```
+
+Histogram of the total number of steps taken each day with the missing data filled in
+```{r histogram_2}
+stepsDay2=group_by(activityComplete,date)
+stepsDay2=summarize(stepsDay2,totalSteps=sum(steps))
+hist(stepsDay2$totalSteps,
+     xlab="Steps",main="Total number of steps taken each day imputing missing values")
+```
+
+Calculating the mean and median total number of steps taken per day
+```{r calculations_2}
+mean(stepsDay2$totalSteps) #Mean
+median(stepsDay2$totalSteps) #Median
+```
+
+
+###Are there differences in activity patterns between weekdays and weekends?
+
+New factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+```{r adding weekdays}
+Sys.setlocale("LC_TIME", "English") #Weekdays in English
+        
+activityComplete=mutate(activityComplete,weekday=as.factor(weekdays(activityComplete$date)))
+levels(activityComplete$weekday)=c(rep("weekday",2),rep("weekend",2),rep("weekday",3))                                        
+head(activityComplete)        
+```
+
+Panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)
+```{r time series plot,fig.height=10,fig.width=8}
+###Subseting weekday
+weekday=subset(activityComplete,weekday=="weekday") 
+intervalWeekday=group_by(weekday,interval)
+intervalWeekday=summarize(intervalWeekday,stepsInterval=mean(steps,na.rm=T))
+
+###Subseting weekend
+weekend=subset(activityComplete,weekday=="weekend")
+intervalWeekend=group_by(weekend,interval)
+intervalWeekend=summarize(intervalWeekend,stepsInterval=mean(steps,na.rm=T))
+
+        ###Ploting...
+        par(mfcol=c(2,1))
+        
+        ###top plot
+        plot(intervalWeekend$interval,intervalWeekend$stepsInterval,
+             main="Weekend",xlab="Interval",ylab="Number of steps",
+             type="l",col="blue")
+        
+        ###bottom plot
+        plot(intervalWeekday$interval,intervalWeekday$stepsInterval,
+             main="Weekday",xlab="Interval",ylab="Number of steps",
+             type="l",col="red")
+```
