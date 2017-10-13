@@ -216,4 +216,4 @@ intervalWeekend=summarize(intervalWeekend,stepsInterval=mean(steps,na.rm=T))
              type="l",col="red")
 ```
 
-![plot of chunk time series plot](figure/time series plot-1.png)
+![](figure/time series plot-1.png)
