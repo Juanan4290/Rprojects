@@ -1,6 +1,7 @@
 Most harmful events across the United States
 ===================================
-Author:  [Juan Antonio Morales] (juanan4290@gmail.com)
+Author: **Juan Antonio Morales** (juanan4290@gmail.com)
+
 Date: January 12, 2017
 
 #### Synopsis
