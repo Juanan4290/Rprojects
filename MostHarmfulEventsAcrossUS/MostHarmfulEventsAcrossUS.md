@@ -134,7 +134,7 @@ legend("topright", c("Fatalities","Injuries","Total"),fill=c("yellow","blue","re
 
 ![](figure/barplot1-1.png)
 
-According to barplot, we can easyly see that the **most harmful type of event across the United States is TORNADO**
+According to barplot, we can easyly see that the **most harmful type of event across the United States is *TORNADO***
 
 #### Economic consequences
 
