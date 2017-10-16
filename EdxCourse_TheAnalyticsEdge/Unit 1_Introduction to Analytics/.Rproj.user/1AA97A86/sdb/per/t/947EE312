@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1502884503058.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "947EE312",
+    "lastKnownWriteTime" : 7308604914264011873,
+    "last_content_update" : 1502884503058,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "F32521D4",
+        "caption" : "fluTest",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=fluTest&cache_key=F32521D4",
+        "displayedObservations" : 52,
+        "environment" : "",
+        "object" : "fluTest",
+        "preview" : 0,
+        "totalObservations" : 52,
+        "variables" : 3
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
