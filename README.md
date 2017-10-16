@@ -7,7 +7,6 @@ Some projects developed in R:
   2. Next Word Predictor
 - **ElectricPowerConsumption_ExploratoryDataAnalysis**: Our overall goal here is simply to examine how household energy usage varies over a 2-day period in February, 2007.
 - **GettingAndCleaningData_CourseProject**: Getting Human Activity Recognition Using Smartphones datasets and cleaning into one datase, calculating the mean and standard deviation for each measurement.
-- **ML-Models**: Collection of some syntax Machine Learning models (Logistic Regression, Random Forest, etc.)
 - **MostHarmfulEventsAcrossUS**: Our specific goal is to know what types of wheather events are most harmful with respect to population health and which ones have the greatest economic consequences.
 - **MotorTrendCarAnalysis**: We analyze if an automatic transmission is better than manual transmission for MPG and quantifying the MPG difference between automatic and manual transmissions for Motor Trend Magazine.
 - **StatisticalInference**: We have developed some T-tests using the Central Limit Theorem and analyzing the ToothGrowth data in the R datasets package.
