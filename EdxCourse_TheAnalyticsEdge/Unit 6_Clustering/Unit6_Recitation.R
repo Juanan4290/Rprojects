@@ -68,7 +68,7 @@ str(healthyVector)
 # Video 5
 
 # Specify number of clusters
-k = 3
+k = 5
 
 # Run k-means
 set.seed(1)
