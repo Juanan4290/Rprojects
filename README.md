@@ -1,4 +1,4 @@
-# Rprojects
+# Rprojects:
 Some projects developed in R:
 - **ActivityMonitoringAnalysis**:This project analyzes data from personal activity monitoring device. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 - **CachingMeanVectorAndInverseMatrix**: time-consuming computations for taking the mean of a numeric vector and the inverse of a matrix.
